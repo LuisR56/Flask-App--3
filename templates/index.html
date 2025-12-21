@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% set title = "Dashboard" %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <div>
+    <h1 class="h3 mb-1">Welcome</h1>
+    <div class="text-muted">Your dashboard summary is below.</div>
+  </div>
+  <a class="btn btn-outline-light btn-sm bg-primary border-0" href="/groceries">
+    Manage Grocery List
+  </a>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <div class="fw-semibold">Entire Grocery List (All Trips)</div>
+    <span class="badge text-bg-secondary">{{ trips|length }} trips</span>
+  </div>
+
+  <div class="card-body">
+    {% if trips and trips|length > 0 %}
+      {% for trip, items in trips.items() %}
+        <div class="mb-4">
+          <div class="d-flex align-items-center justify-content-between">
+            <h2 class="h6 mb-2">{{ trip }}</h2>
+            <a class="small" href="/groceries?trip={{ trip|urlencode }}">Open</a>
+          </div>
+
+          {% if items and items|length > 0 %}
+            <ul class="list-group">
+              {% for item in items %}
+                <li class="list-group-item d-flex align-items-center justify-content-between">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" {% if item.checked %}checked{% endif %} disabled>
+                    <label class="form-check-label {% if item.checked %}text-decoration-line-through text-muted{% endif %}">
+                      {{ item.text }}
+                    </label>
+                  </div>
+                  <span class="badge text-bg-light">#{{ item.id }}</span>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <div class="text-muted small">No items yet.</div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="text-muted">No trips found.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

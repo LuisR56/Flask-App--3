@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% set title = "Grocery Shopping List" %}
+
+{% block content %}
+<div class="d-flex align-items-start justify-content-between mb-3">
+  <div>
+    <h1 class="h3 mb-1">Grocery Shopping List</h1>
+    <div class="text-muted">Add items to a trip-based checklist. Use the pencil to edit.</div>
+  </div>
+
+  <!-- Pencil icon at top right -->
+  <button id="btnToggleEdit" class="btn btn-outline-secondary" type="button" title="Toggle edit mode">
+    <i class="bi bi-pencil"></i>
+    <span class="ms-1">Edit</span>
+  </button>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold">Trip</div>
+      <div class="card-body">
+        <label class="form-label">Select trip</label>
+        <select id="tripSelect" class="form-select">
+          {% for name in trip_names %}
+            <option value="{{ name }}" {% if name == active_trip %}selected{% endif %}>{{ name }}</option>
+          {% endfor %}
+        </select>
+
+        <hr>
+
+        <label class="form-label">Create new trip</label>
+        <div class="input-group">
+          <input id="newTripName" class="form-control" placeholder="e.g., Costco Run">
+          <button id="btnCreateTrip" class="btn btn-primary" type="button">Create</button>
+        </div>
+
+        <div id="tripMsg" class="small mt-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold d-flex align-items-center justify-content-between">
+        <div>Items for: <span class="badge text-bg-primary" id="activeTripBadge">{{ active_trip }}</span></div>
+        <a class="small" href="/">Back to dashboard</a>
+      </div>
+
+      <div class="card-body">
+        <label class="form-label">Add item</label>
+        <div class="input-group mb-3">
+          <input id="itemText" class="form-control" placeholder="e.g., Eggs, Milk, Rice">
+          <button id="btnAddItem" class="btn btn-success" type="button">Add</button>
+        </div>
+
+        <div id="itemsMsg" class="small mb-2"></div>
+
+        <ul id="itemsList" class="list-group"
+            data-active-trip="{{ active_trip }}">
+          {% for item in items %}
+          <li class="list-group-item d-flex align-items-center justify-content-between"
+              data-item-id="{{ item.id }}">
+            <div class="d-flex align-items-center gap-2 flex-grow-1">
+              <input class="form-check-input item-check" type="checkbox" {% if item.checked %}checked{% endif %}>
+              <span class="item-text {% if item.checked %}text-decoration-line-through text-muted{% endif %}"
+                    data-original="{{ item.text }}">{{ item.text }}</span>
+            </div>
+
+            <!-- Shown only in Edit Mode via JS -->
+            <div class="edit-controls d-none">
+              <button class="btn btn-sm btn-outline-danger btn-delete" type="button" title="Delete item">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+
+        {% if not items or items|length == 0 %}
+          <div class="text-muted mt-3" id="emptyState">No items yet. Add your first item above.</div>
+        {% else %}
+          <div class="text-muted mt-3 d-none" id="emptyState">No items yet. Add your first item above.</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
